@@ -52,8 +52,8 @@ tmpfs /var/lib/systemd/timers tmpfs defaults,noatime,nosuid,size=50M	0	0
 EOF
 fi
 
-echo adsbexchange > /etc/hostname
-touch /boot/adsb-config.txt # canary used in some scripting if it's the adsbexchange image
+echo adsbfi > /etc/hostname
+touch /boot/adsbfi-config.txt
 
 mv /etc/cron.hourly/fake-hwclock /etc/cron.daily || true
 
@@ -106,19 +106,18 @@ rm -f /etc/apt/sources.list.d/piaware-*.list
 
 mkdir -p /adsbexchange/
 rm -rf /adsbexchange/update
-git clone --depth 1 https://github.com/ADSBexchange/adsbx-update.git /adsbexchange/update
-rm -rf /adsbexchange/update/.git
+git clone --depth 1 https://github.com/ogadsb/feeder-update.git /adsbfi/update
+rm -rf /adsbfi/update/.git
 
-bash /adsbexchange/update/update-adsbx.sh
+bash /adsbfi/update/update-adsbfi.sh
 
-git clone --depth 1 https://github.com/dstreufert/adsbx-webconfig.git
-pushd adsbx-webconfig
+git clone --depth 1 https://github.com/ogadsb/feeder-webconfig.git
+pushd adsbfi-webconfig
 bash install.sh
 popd
 
 bash -c "$(curl -L -o - https://github.com/wiedehopf/graphs1090/raw/master/install.sh)"
-#make sure the symlinks are present for graphs1090 data collection:
-ln -snf /run/adsbexchange-978 /usr/share/graphs1090/978-symlink/data
+ln -snf /run/adsbfi-978 /usr/share/graphs1090/978-symlink/data
 ln -snf /run/readsb /usr/share/graphs1090/data-symlink/data
 
 bash -c "$(curl -L -o - https://github.com/wiedehopf/adsb-scripts/raw/master/autogain-install.sh)"
@@ -136,9 +135,9 @@ apt clean
 sed -i -e 's#^driftfile.*#driftfile /var/tmp/chrony.drift#' /etc/chrony/chrony.conf
 
 # config symlinks
-ln -sf /boot/adsbx-978env /etc/default/dump978-fa
-ln -sf /boot/adsbx-env /etc/default/readsb
-ln -sf /boot/adsb-config.txt /etc/default/adsbexchange
+ln -sf /boot/adsbfi-978env /etc/default/dump978-fa
+ln -sf /boot/adsbfi-env /etc/default/readsb
+ln -sf /boot/adsbfi-config.txt /etc/default/adsbfi
 
 cd /
 rm -rf /utemp
