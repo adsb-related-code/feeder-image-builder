@@ -104,8 +104,8 @@ done
 apt purge -y piaware-repository
 rm -f /etc/apt/sources.list.d/piaware-*.list
 
-mkdir -p /adsbexchange/
-rm -rf /adsbexchange/update
+mkdir -p /adsbfi/
+rm -rf /adsbfi/update
 git clone --depth 1 https://github.com/ogadsb/feeder-update.git /adsbfi/update
 rm -rf /adsbfi/update/.git
 
